@@ -1,0 +1,14 @@
+---
+# Example password is "Password" for both, you must change this
+
+pi_custom_password: "$6$6nnSiMHYKIN6xDLs$tDyRO7SyM5LUFO4xlSiQ4NZpgPxyckYg4dGBTc22rhCEFux6LHO7BW857EQbOMb58eUU3f4.lE8iO3BE.JyPp/"
+
+# Overclock the SD and only give the GPU 16MB of ram
+
+raspberry_pi_boot_config_options:
+  - regexp: "^#?gpu_mem"
+    line: "gpu_mem=16"
+  - regexp: "^#?dtoverlay=sdtweak,overclock_50=100"
+    line: "dtoverlay=sdtweak,overclock_50=100"
+
+...

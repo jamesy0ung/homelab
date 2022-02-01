@@ -1,0 +1,31 @@
+---
+
+      - name: Change the password of the user pi
+        user:
+          name: pi
+          password: "{{ pi_custom_password }}"
+          state: present
+          update_password: always
+
+      - name: Make sudo require a password for the pi user
+        lineinfile:
+          path: "{{ pi_sudoersd_path }}"
+          regexp: "^pi"
+          line: "pi ALL=(ALL) PASSWD: ALL"
+
+      - name: Configure options in /boot/config.txt.
+        lineinfile:
+          dest: /boot/config.txt
+          regexp: "{{ item.regexp }}"
+          line: "{{ item.line }}"
+          insertafter: EOF
+          state: present
+          with_items: "{{ raspberry_pi_boot_config_options }}"
+
+      - name: Enable cgroup support
+        lineinfile:
+          path: /boot/cmdline.txt
+          regexp: '^((?!.*\bcgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory\b).*)$'
+          line: '\1 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory'
+          backrefs: true
+

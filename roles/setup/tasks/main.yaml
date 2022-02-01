@@ -17,13 +17,6 @@
           - ufw
           - fail2ban
 
-      - name: Change the password of the user pi
-        user:
-          name: pi
-          password: "{{ pi_custom_password }}"
-          state: present
-          update_password: always
-
       - name: Create alternative user
         user:
           name: "{{ alternative_user }}"
@@ -46,7 +39,7 @@
           insertafter: "EOF"
           line: "DenyUsers pi root"
 
-      - name: Copy authorized_keys file to Raspberry Pi
+      - name: Copy authorized_keys file to server
         copy:
           src: files/authorized_keys
           dest: "/home/{{ alternative_user }}/.ssh/"
@@ -72,8 +65,6 @@
           regexp: "^UsePAM"
           line: "UsePAM no"
 
-### UFW muss einen reboot triggern
-
       - name: Start and enable UFW
         ufw:
           state: enabled
@@ -94,7 +85,7 @@
           port: ssh
           proto: tcp
 
-      - name: Copy jail.local file to Raspberry Pi
+      - name: Copy jail.local file to server
         copy:
           src: files/jail.local
           dest: "/etc/fail2ban/"
@@ -102,17 +93,3 @@
           group: root
           mode: 0644
 
-      - name: Make sudo require a password for the pi user
-        lineinfile:
-          path: "{{ pi_sudoersd_path }}"
-          regexp: "^pi"
-          line: "pi ALL=(ALL) PASSWD: ALL"
-
-      - name: Configure options in /boot/config.txt.
-        lineinfile:
-          dest: /boot/config.txt
-          regexp: "{{ item.regexp }}"
-          line: "{{ item.line }}"
-          insertafter: EOF
-          state: present
-          with_items: "{{ raspberry_pi_boot_config_options }}"
