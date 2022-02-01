@@ -72,4 +72,16 @@
           owner: root
           group: root
           mode: 0644
+      - name: Enable IPv4 forwarding
+        sysctl:
+          name: net.ipv4.ip_forward
+          value: "1"
+          state: present
+          reload: yes
 
+      - name: Enable IPv6 forwarding
+        sysctl:
+          name: net.ipv6.conf.all.forwarding
+          value: "1"
+          state: present
+          reload: yes
