@@ -4,19 +4,6 @@
         include_vars:
           file: "vars/main.yaml"
 
-      - name: Update apt packages list
-        apt:
-          upgrade: no
-          update_cache: yes
-          cache_valid_time: 86400
-
-      - name: Install required packages
-        apt:
-          name: "{{ item }}"
-        with_items:
-          - ufw
-          - fail2ban
-
       - name: Create alternative user
         user:
           name: "{{ alternative_user }}"
@@ -65,13 +52,6 @@
           regexp: "^UsePAM"
           line: "UsePAM no"
 
-      - name: Copy jail.local file to server
-        copy:
-          src: files/jail.local
-          dest: "/etc/fail2ban/"
-          owner: root
-          group: root
-          mode: 0644
       - name: Enable IPv4 forwarding
         sysctl:
           name: net.ipv4.ip_forward
